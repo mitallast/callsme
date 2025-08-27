@@ -1,0 +1,116 @@
+:root {
+}
+
+html, body, figure {
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+#app {
+    position: fixed;
+    inset: 0;
+    background: #222;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-grid {
+    display: flex;
+    flex-wrap: wrap; /* перенос в новые строки */
+    gap: 16px;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    background: #111;
+}
+
+.video-grid figure {
+    margin: 0;
+    position: relative;
+    flex: 1 1 480px; /* min-width ~480px, растёт до ширины строки */
+    max-width: 100%;
+    display: flex; /* центрируем видео внутри */
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.video-grid figure > video {
+    width: 100%;
+    height: auto; /* сохраняет аспект, высота идёт от ширины */
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    background: #000;
+}
+
+.video-grid figure figcaption {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    font: 500 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: #fff;
+    background: rgba(0, 0, 0, .55);
+    border-radius: 6px;
+    backdrop-filter: blur(2px);
+    pointer-events: none;
+}
+
+.room-toolbar {
+    z-index: 100;
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    left: 8px;
+    height: 48px; /* по умолчанию скрыта, не занимает место */
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
+}
+
+.icon {
+    height: 48px;
+    width: 48px;
+    display: block;
+    border: none;
+    margin: 0;
+    padding: 0;
+    mask-size: 48px 48px;
+    background-color: #fff;
+}
+
+.icon.microphone-lines {
+    mask-image: url('svgs/solid/microphone-lines.svg');
+}
+
+.icon.microphone-lines-slash {
+    mask-image: url('svgs/solid/microphone-lines-slash.svg');
+}
+
+.icon.video {
+    mask-image: url('svgs/solid/video.svg');
+}
+
+.icon.video-slash {
+    mask-image: url('svgs/solid/video-slash.svg');
+}
+
+.icon.desktop {
+    mask-image: url('svgs/solid/desktop.svg');
+}
+
+.icon.call-slash {
+    mask-image: url('svgs/solid/phone-slash.svg');
+}

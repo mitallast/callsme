@@ -1,0 +1,62 @@
+import {ValueEventEmitter} from "./events";
+import {Transport} from "mediasoup-client/lib/Transport";
+import {Device} from "mediasoup-client";
+import {ConsumerId, ServerInit, ServerProducerAdded, ServerProducerRemoved} from "./types";
+import {WSConnection} from "./socket";
+import {ConsumerOptions} from "mediasoup-client/lib/Consumer";
+import {Participants} from "./participants";
+
+export class ConsumerState {
+    public readonly consumerTransport = new ValueEventEmitter<Transport | null>(null);
+
+    constructor(
+        private readonly device: Device,
+        private readonly participants: Participants,
+    ) {
+    }
+
+    public async start(message: ServerInit, ws: WSConnection) {
+        // Producer transport will be needed to receive produced tracks
+        const transport = this.device.createRecvTransport(message.consumerTransportOptions);
+        transport.on('connect', ({dtlsParameters}, success) => {
+            // Send a request to establish consumer transport connection
+            ws.connectConsumerTransport(dtlsParameters)
+                .then(() => success())
+                .catch((error) => console.error(error))
+        });
+
+        await this.consumerTransport.set(transport);
+    }
+
+    public async stop() {
+        this.participants.deleteAll();
+
+        if (this.consumerTransport.value) {
+            this.consumerTransport.value.close();
+            await this.consumerTransport.set(null);
+        }
+    }
+
+    public async onProducerAdded(message: ServerProducerAdded, ws: WSConnection) {
+        const consumerOptions: ConsumerOptions = await ws.clientConsume(message.producerId)
+
+        // Once confirmation is received, a corresponding consumer
+        // can be created client-side
+        const consumer = await this.consumerTransport.value!.consume(consumerOptions);
+        console.log(`${consumer.kind} consumer created:`, consumer);
+
+        // Consumer needs to be resumed after being created in
+        //  a paused state (see official documentation about why:
+        // https://mediasoup.org/documentation/v3/mediasoup/api/#transport-consume)
+        ws.send({
+            action: 'ConsumerResume',
+            id: consumer.id as ConsumerId
+        });
+
+        this.participants.addTrack(message.participantId, message.producerId, consumer.track);
+    }
+
+    public async onProducerRemoved(message: ServerProducerRemoved) {
+        this.participants.deleteTrack(message.participantId, message.producerId);
+    }
+}
