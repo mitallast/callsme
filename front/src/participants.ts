@@ -1,12 +1,14 @@
-import {ParticipantId, ProducerId} from "./types";
+import type {ParticipantId, ProducerId} from "./types";
 import {Participant} from "./participant";
 
 export class Participants {
-    private participants = new Map<ParticipantId, Participant>();
-    private producerIdToTrack = new Map<ProducerId, MediaStreamTrack>();
-    private producerIdToParticipantId = new Map<ProducerId, ParticipantId>();
+    private readonly container: HTMLElement;
+    private readonly participants = new Map<ParticipantId, Participant>();
+    private readonly producerIdToTrack = new Map<ProducerId, MediaStreamTrack>();
+    private readonly producerIdToParticipantId = new Map<ProducerId, ParticipantId>();
 
-    constructor(private readonly container: HTMLElement) {
+    constructor(container: HTMLElement) {
+        this.container = container;
     }
 
     public addTrack(

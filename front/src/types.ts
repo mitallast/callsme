@@ -1,5 +1,4 @@
-import {DtlsParameters, TransportOptions} from "mediasoup-client/lib/Transport";
-import {MediaKind, RtpCapabilities, RtpParameters} from "mediasoup-client/lib/RtpParameters";
+import {types} from "mediasoup-client";
 
 export type Brand<K, T> = K & { __brand: T };
 
@@ -11,9 +10,9 @@ export type ProducerId = Brand<string, 'ProducerId'>;
 export interface ServerInit {
     action: 'Init';
     roomId: RoomId;
-    consumerTransportOptions: TransportOptions;
-    producerTransportOptions: TransportOptions;
-    routerRtpCapabilities: RtpCapabilities;
+    consumerTransportOptions: types.TransportOptions;
+    producerTransportOptions: types.TransportOptions;
+    routerRtpCapabilities: types.RtpCapabilities;
 }
 
 export interface ServerProducerAdded {
@@ -44,8 +43,8 @@ export interface ServerConnectedConsumerTransport {
 export interface ServerConsumed {
     action: 'Consumed';
     id: ConsumerId;
-    kind: MediaKind;
-    rtpParameters: RtpParameters;
+    kind: types.MediaKind;
+    rtpParameters: types.RtpParameters;
 }
 
 export type ServerMessage =
@@ -59,23 +58,23 @@ export type ServerMessage =
 
 export interface ClientInit {
     action: 'Init';
-    rtpCapabilities: RtpCapabilities;
+    rtpCapabilities: types.RtpCapabilities;
 }
 
 export interface ClientConnectProducerTransport {
     action: 'ConnectProducerTransport';
-    dtlsParameters: DtlsParameters;
+    dtlsParameters: types.DtlsParameters;
 }
 
 export interface ClientConnectConsumerTransport {
     action: 'ConnectConsumerTransport';
-    dtlsParameters: DtlsParameters;
+    dtlsParameters: types.DtlsParameters;
 }
 
 export interface ClientProduce {
     action: 'Produce';
-    kind: MediaKind;
-    rtpParameters: RtpParameters;
+    kind: types.MediaKind;
+    rtpParameters: types.RtpParameters;
 }
 
 export interface ClientConsume {

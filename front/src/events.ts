@@ -4,7 +4,7 @@ export class EventEmitter<T> {
     private readonly listeners = new Set<EventListener<T>>();
 
     protected async emit(event: T): Promise<void> {
-        for (let listener of this.listeners) {
+        for (const listener of this.listeners) {
             await listener(event);
         }
     }

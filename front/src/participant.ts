@@ -1,20 +1,22 @@
-import {ParticipantId} from "./types";
+import type {ParticipantId} from "./types";
 import {VideoState} from "./video";
 
 export class Participant {
     private readonly figure: HTMLElement;
     private readonly preview: HTMLVideoElement;
 
+    public readonly id: ParticipantId;
     private readonly mediaStream = new MediaStream();
     private audioTrack: MediaStreamTrack | null = null;
     private videoTrack: MediaStreamTrack | null = null;
 
     constructor(
         container: HTMLElement,
-        public readonly id: ParticipantId
+        id: ParticipantId
     ) {
         this.figure = document.createElement('figure');
         this.preview = document.createElement('video');
+        this.id = id;
 
         this.preview.muted = false;
         this.preview.controls = false;
@@ -87,7 +89,7 @@ export class Participant {
 export class SendPreview extends Participant {
     constructor(
         container: HTMLElement,
-        public readonly id: ParticipantId,
+        id: ParticipantId,
         videoState: VideoState,
     ) {
         super(container, id);

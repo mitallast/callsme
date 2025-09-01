@@ -1,7 +1,6 @@
 import {Device} from "mediasoup-client";
-import {Transport} from "mediasoup-client/lib/Transport";
-import {Producer} from "mediasoup-client/lib/Producer";
-import {ServerInit} from "./types";
+import {types} from "mediasoup-client";
+import type {ServerInit} from "./types";
 import {WSConnection} from "./socket";
 import {BooleanEventEmitter, ValueEventEmitter} from "./events";
 import {AudioState} from "./audio";
@@ -9,21 +8,23 @@ import {VideoState} from "./video";
 
 export class ProducerState {
 
-    private readonly producerTransport = new ValueEventEmitter<Transport | null>(null);
+    private readonly device: Device;
+    private readonly producerTransport = new ValueEventEmitter<types.Transport | null>(null);
 
     private readonly videoTrack: ValueEventEmitter<MediaStreamTrack | null>;
     private readonly videoTrackPause: BooleanEventEmitter;
-    private readonly videoTrackProducer = new ValueEventEmitter<Producer | null>(null);
+    private readonly videoTrackProducer = new ValueEventEmitter<types.Producer | null>(null);
 
     private readonly audioTrack: ValueEventEmitter<MediaStreamTrack | null>;
     private readonly audioTrackPause: BooleanEventEmitter;
-    private readonly audioTrackProducer = new ValueEventEmitter<Producer | null>(null);
+    private readonly audioTrackProducer = new ValueEventEmitter<types.Producer | null>(null);
 
     constructor(
-        private readonly device: Device,
+        device: Device,
         videoState: VideoState,
         audioState: AudioState,
     ) {
+        this.device = device;
         this.videoTrack = videoState.track;
         this.videoTrackPause = videoState.pause;
         this.audioTrack = audioState.track;
@@ -31,6 +32,7 @@ export class ProducerState {
 
         this.videoTrack.addListener(() => this.updateVideoTrackProducer());
         this.audioTrack.addListener(() => this.updateAudioTrackProducer());
+
         this.producerTransport.addListener(() => this.updateAudioTrackProducer());
         this.producerTransport.addListener(() => this.updateVideoTrackProducer());
 

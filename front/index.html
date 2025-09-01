@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Callsme</title>
+    <link rel="stylesheet" href="src/style.css" integrity="" crossorigin="anonymous">
+</head>
+<body>
+<div id="app">
+    <div class="room">
+        <div class="video-grid">
+            <figure>
+                <video autoplay playsinline></video>
+                <figcaption>participant</figcaption>
+            </figure>
+        </div>
+        <div class="room-toolbar">
+            <button class="material-symbols-outlined">mic</button>
+            <button class="material-symbols-outlined">mic_off</button>
+            <button class="material-symbols-outlined">videocam</button>
+            <button class="material-symbols-outlined">videocam_off</button>
+            <button class="material-symbols-outlined">screen_share</button>
+            <button class="material-symbols-outlined">call_end</button>
+        </div>
+    </div>
+</div>
+<script type="module" src="src/index.ts"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import {BooleanEventEmitter, ValueEventEmitter} from "./events";
-import {RoomId} from "./types";
+import type {RoomId} from "./types";
 
 export class RoomState {
     public readonly running = new BooleanEventEmitter(true);

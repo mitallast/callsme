@@ -1,18 +1,18 @@
 import {ValueEventEmitter} from "./events";
-import {Transport} from "mediasoup-client/lib/Transport";
-import {Device} from "mediasoup-client";
-import {ConsumerId, ServerInit, ServerProducerAdded, ServerProducerRemoved} from "./types";
+import {types, Device} from "mediasoup-client";
+import type {ConsumerId, ServerInit, ServerProducerAdded, ServerProducerRemoved} from "./types";
 import {WSConnection} from "./socket";
-import {ConsumerOptions} from "mediasoup-client/lib/Consumer";
 import {Participants} from "./participants";
 
 export class ConsumerState {
-    public readonly consumerTransport = new ValueEventEmitter<Transport | null>(null);
+    private readonly device: Device;
+    private readonly participants: Participants;
 
-    constructor(
-        private readonly device: Device,
-        private readonly participants: Participants,
-    ) {
+    public readonly consumerTransport = new ValueEventEmitter<types.Transport | null>(null);
+
+    constructor(device: Device, participants: Participants) {
+        this.device = device;
+        this.participants = participants;
     }
 
     public async start(message: ServerInit, ws: WSConnection) {
@@ -38,7 +38,7 @@ export class ConsumerState {
     }
 
     public async onProducerAdded(message: ServerProducerAdded, ws: WSConnection) {
-        const consumerOptions: ConsumerOptions = await ws.clientConsume(message.producerId)
+        const consumerOptions: types.ConsumerOptions = await ws.clientConsume(message.producerId)
 
         // Once confirmation is received, a corresponding consumer
         // can be created client-side
