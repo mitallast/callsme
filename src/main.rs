@@ -28,7 +28,7 @@ async fn ws_index(
     rooms_registry: Data<RoomsRegistry>,
     stream: Payload,
 ) -> Result<HttpResponse, Error> {
-    let room = match query_parameters.room_id {
+    let room = match query_parameters.room_id.clone() {
         Some(room_id) => {
             rooms_registry
                 .get_or_create_room(&worker_manager, room_id)

@@ -1,8 +1,12 @@
-import {Room} from "./room";
+import {RoomJoin} from "./room.join.ts";
 
 document.addEventListener('DOMContentLoaded', async () => {
     const app: HTMLElement = document.querySelector('#app')!;
     app.innerHTML = '';
-    const room = new Room(app);
-    await room.init();
+
+    // const room = new Room(app);
+    // await room.init();
+
+    const roomJoin = new RoomJoin(app);
+    roomJoin.init();
 });

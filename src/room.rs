@@ -6,7 +6,7 @@ use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
-use std::num::{NonZeroU32, NonZeroU8};
+use std::num::{NonZeroU8, NonZeroU32};
 use std::sync::{Arc, Weak};
 use uuid::Uuid;
 
@@ -37,8 +37,8 @@ fn media_codecs() -> Vec<RtpCodecCapability> {
     ]
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Ord, PartialOrd, Deserialize, Serialize)]
-pub struct RoomId(Uuid);
+#[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd, Deserialize, Serialize)]
+pub struct RoomId(String);
 
 impl fmt::Display for RoomId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -48,7 +48,7 @@ impl fmt::Display for RoomId {
 
 impl RoomId {
     pub fn new() -> Self {
-        Self(Uuid::new_v4())
+        Self(Uuid::new_v4().to_string())
     }
 }
 
@@ -101,10 +101,7 @@ impl Room {
     }
 
     /// Create new `Room` with a specific `RoomId`
-    pub async fn new_with_id(
-        worker_manager: &WorkerManager,
-        id: RoomId,
-    ) -> Result<Room, String> {
+    pub async fn new_with_id(worker_manager: &WorkerManager, id: RoomId) -> Result<Room, String> {
         let worker = worker_manager
             .create_worker({
                 let mut settings = WorkerSettings::default();
@@ -148,7 +145,7 @@ impl Room {
 
     /// ID of the room
     pub fn id(&self) -> RoomId {
-        self.inner.id
+        self.inner.id.clone()
     }
 
     /// Get router associated with this room

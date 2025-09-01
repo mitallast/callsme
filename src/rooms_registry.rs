@@ -20,7 +20,7 @@ impl RoomsRegistry {
         room_id: RoomId,
     ) -> Result<Room, String> {
         let mut rooms = self.rooms.lock().await;
-        match rooms.entry(room_id) {
+        match rooms.entry(room_id.clone()) {
             Entry::Occupied(mut entry) => match entry.get().upgrade() {
                 Some(room) => Ok(room),
                 None => {

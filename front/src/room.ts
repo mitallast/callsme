@@ -10,6 +10,7 @@ import {RoomState} from "./room.state";
 import {ConsumerState} from "./consumer.state";
 import {SendPreview} from "./participant";
 import type {EventListener} from "./events";
+import {RoomJoin} from "./room.join.ts";
 
 export class Room {
     private readonly roomState = new RoomState();
@@ -18,7 +19,11 @@ export class Room {
     private readonly producerState: ProducerState;
     private readonly consumerState: ConsumerState;
 
-    constructor(container: HTMLElement) {
+    private readonly app: HTMLElement;
+
+    constructor(app: HTMLElement) {
+        this.app = app;
+
         const grid = document.createElement('div');
         grid.classList.add('video-grid');
 
@@ -26,7 +31,7 @@ export class Room {
         room.classList.add('room');
         room.append(grid);
         room.append(RoomToolbar(this.roomState, this.audioState, this.videoState));
-        container.append(room);
+        app.append(room);
 
         const preview = new SendPreview(grid, 'you' as ParticipantId, this.videoState);
         const participants = new Participants(grid);
@@ -58,6 +63,12 @@ export class Room {
             }
         }
         console.log('room closed');
+
+        queueMicrotask(() => {
+            this.app.innerHTML = '';
+            const join = new RoomJoin(this.app);
+            join.init();
+        });
     }
 
     private connect(wsUrl: URL): Promise<void> {

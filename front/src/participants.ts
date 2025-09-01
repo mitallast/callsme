@@ -39,6 +39,8 @@ export class Participants {
     public async deleteTrack(participantId: ParticipantId, producerId: ProducerId) {
         const track = this.producerIdToTrack.get(producerId);
         if (track) {
+            console.log(`${track.kind} track deleted:`, track);
+
             this.producerIdToTrack.delete(producerId);
             this.producerIdToParticipantId.delete(producerId);
 
@@ -46,13 +48,18 @@ export class Participants {
 
             participant.removeTrack(track);
             if (!participant.hasTracks()) {
+                console.log(`delete participant:`, participantId);
+
                 this.participants.delete(participantId);
                 participant.destroy();
+                await this.onParticipantsChanged.emit(this);
+            } else {
+                console.log(`keep participant:`, participant.tracks());
             }
         }
     }
 
-    private async getOrCreateParticipant(id: ParticipantId) {
+    private async getOrCreateParticipant(id: ParticipantId): Promise<Participant> {
         let participant = this.participants.get(id);
 
         if (!participant) {

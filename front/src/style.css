@@ -23,6 +23,48 @@ html, body, figure, figcaption, video, h2 {
     overflow: hidden;
 }
 
+.room-join {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 320px;
+    margin: 0 auto;
+}
+
+.room-join form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 20rem;
+    margin: 0 auto;
+}
+
+.room-join form .form-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+}
+
+.room-join form input {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: #333;
+    color: #fff;
+    font-size: 2rem;
+    width: 100%;
+    display: block;
+}
+
+.room-join form button {
+    padding: 0.5rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 2rem;
+    display: block;
+}
+
 .room {
     display: flex;
     flex-direction: column;
