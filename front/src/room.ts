@@ -7,9 +7,9 @@ import {AudioState} from "./audio";
 import {VideoState} from "./video";
 import {RoomToolbar} from "./room.toolbar";
 import {RoomState} from "./room.state";
-import type {EventListener} from "./events";
 import {ConsumerState} from "./consumer.state";
 import {SendPreview} from "./participant";
+import type {EventListener} from "./events";
 
 export class Room {
     private readonly roomState = new RoomState();
@@ -28,8 +28,11 @@ export class Room {
         room.append(RoomToolbar(this.roomState, this.audioState, this.videoState));
         container.append(room);
 
-        new SendPreview(grid, 'you' as ParticipantId, this.videoState);
+        const preview = new SendPreview(grid, 'you' as ParticipantId, this.videoState);
         const participants = new Participants(grid);
+        participants.onParticipantsChanged.addListener((participants) => {
+            preview.setOverlay(participants.hasParticipants());
+        });
 
         const device = new Device();
         this.producerState = new ProducerState(device, this.videoState, this.audioState);

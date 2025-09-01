@@ -2,7 +2,7 @@ import type {ParticipantId} from "./types";
 import {VideoState} from "./video";
 
 export class Participant {
-    private readonly figure: HTMLElement;
+    protected readonly figure: HTMLElement;
     private readonly preview: HTMLVideoElement;
 
     public readonly id: ParticipantId;
@@ -93,12 +93,20 @@ export class SendPreview extends Participant {
         videoState: VideoState,
     ) {
         super(container, id);
-        videoState.track.addListener(async (track) => {
+        videoState.track.addListener((track) => {
             if (track) {
                 this.setTrack(track);
             } else {
                 this.remove('video');
             }
         });
+    }
+
+    public setOverlay(overlay: boolean) {
+        if (overlay) {
+            this.figure.classList.add("video-overlay");
+        } else {
+            this.figure.classList.remove("video-overlay");
+        }
     }
 }

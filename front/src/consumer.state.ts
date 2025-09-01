@@ -29,8 +29,7 @@ export class ConsumerState {
     }
 
     public async stop() {
-        this.participants.deleteAll();
-
+        await this.participants.deleteAll();
         if (this.consumerTransport.value) {
             this.consumerTransport.value.close();
             await this.consumerTransport.set(null);
@@ -53,10 +52,10 @@ export class ConsumerState {
             id: consumer.id as ConsumerId
         });
 
-        this.participants.addTrack(message.participantId, message.producerId, consumer.track);
+        await this.participants.addTrack(message.participantId, message.producerId, consumer.track);
     }
 
     public async onProducerRemoved(message: ServerProducerRemoved) {
-        this.participants.deleteTrack(message.participantId, message.producerId);
+        await this.participants.deleteTrack(message.participantId, message.producerId);
     }
 }

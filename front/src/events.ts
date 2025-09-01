@@ -1,11 +1,14 @@
-export type EventListener<T> = (event: T) => Promise<void>;
+export type EventListener<T> = (event: T) => Promise<void> | void;
 
 export class EventEmitter<T> {
     private readonly listeners = new Set<EventListener<T>>();
 
-    protected async emit(event: T): Promise<void> {
+    public async emit(event: T): Promise<void> {
         for (const listener of this.listeners) {
-            await listener(event);
+            const promise = listener(event);
+            if (promise instanceof Promise) {
+                await promise;
+            }
         }
     }
 

@@ -27,7 +27,7 @@ html, body, figure, figcaption, video, h2 {
     display: flex;
     flex-direction: column;
     overflow: hidden auto;
-    padding: 1rem;
+    padding: 0.5rem;
     height: 100%;
 }
 
@@ -64,7 +64,13 @@ html, body, figure, figcaption, video, h2 {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.5rem;
+}
+
+.video-grid figure {
+    border-radius: 1.5rem;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 1rem;
+    overflow: hidden;
 }
 
 .video-grid figure {
@@ -73,10 +79,22 @@ html, body, figure, figcaption, video, h2 {
 
     display: block;
     position: relative;
+}
 
-    border-radius: 1.5rem;
-    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 1rem;
-    overflow: hidden;
+.video-grid figure.video-overlay {
+    display: block;
+    position: absolute;
+    max-width: 10rem;
+    max-height: 10rem;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    z-index: 1000;
+
+    border-radius: 1rem;
+}
+
+.video-grid figure.video-overlay figcaption {
+    display: none;
 }
 
 .video-grid figure video {
@@ -105,6 +123,10 @@ html, body, figure, figcaption, video, h2 {
 }
 
 @media (max-aspect-ratio: 1.2/1) {
+    .video-grid figure.video-overlay {
+        bottom: 4.5rem;
+    }
+
     .video-grid figure {
         flex-basis: 100%;
     }
