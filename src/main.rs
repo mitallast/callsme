@@ -51,7 +51,7 @@ async fn ws_index(
         }
     };
 
-    let announced_address = settings.announce.clone();
+    let announced_address = settings.announce.clone().or(Some("127.0.0.1".to_string()));
     match ParticipantConnection::new(room, announced_address).await {
         Ok(echo_server) => ws::start(echo_server, &request, stream),
         Err(error) => {
