@@ -1,6 +1,4 @@
-use crate::messages::{
-    ClientMessage, InternalMessage, ServerMessage, TransportOptions,
-};
+use crate::messages::{ClientMessage, InternalMessage, ServerMessage, TransportOptions};
 use crate::room::Room;
 use actix::prelude::*;
 use actix_web_actors::ws;
@@ -73,7 +71,7 @@ impl ParticipantConnection {
                 announced_address: None,
                 expose_internal_ip: false,
                 port: None,
-                port_range: None,
+                port_range: Some(40000..=40100),
                 flags: None,
                 send_buffer_size: None,
                 recv_buffer_size: None,

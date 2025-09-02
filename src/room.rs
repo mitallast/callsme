@@ -121,6 +121,7 @@ impl Room {
                     WorkerLogTag::Sctp,
                     WorkerLogTag::Message,
                 ];
+                settings.rtc_port_range = 40000..=40100;
 
                 settings
             })

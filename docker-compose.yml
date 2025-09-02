@@ -1,0 +1,7 @@
+services:
+  app:
+    image: mitallast/callsme
+    ports:
+      - "3000:3000/tcp"
+      - '40000-40100:40000-40100/tcp'
+      - '40000-40100:40000-40100/udp'

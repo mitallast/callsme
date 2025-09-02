@@ -1,16 +1,20 @@
 use crate::participant::ParticipantConnection;
 use crate::room::RoomId;
 use crate::rooms_registry::RoomsRegistry;
+use actix_files as fs;
+use actix_web::middleware::Compress;
 use actix_web::web::{Data, Payload, Query};
-use actix_web::{web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{App, Error, HttpRequest, HttpResponse, HttpServer, web};
 use actix_web_actors::ws;
+use clap::Parser;
+use log::{debug};
 use mediasoup::prelude::*;
 use serde::Deserialize;
 
+mod messages;
+mod participant;
 mod room;
 mod rooms_registry;
-mod participant;
-mod messages;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -56,24 +60,48 @@ async fn ws_index(
     }
 }
 
+async fn index() -> Result<fs::NamedFile, Error> {
+    let file = fs::NamedFile::open("front/dist/index.html")?;
+    Ok(file.use_etag(true))
+}
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    #[arg(long, default_value_t = 3000)]
+    port: u16,
+
+    #[arg(long)]
+    host: Option<String>,
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init();
+
+    let args = Args::parse();
+    let host = args.host.unwrap_or_else(|| "127.0.0.1".to_string());
+    let listen = format!("{}:{}", host, args.port);
+    debug!("Listening on {}", listen);
 
     // We will reuse the same worker manager across all connections, this is more than enough for
     // this use case
     let worker_manager = Data::new(WorkerManager::new());
     // Room registry will hold all the active rooms
     let rooms_registry = Data::new(RoomsRegistry::default());
+
     HttpServer::new(move || {
         App::new()
+            .wrap(Compress::default())
             .app_data(worker_manager.clone())
             .app_data(rooms_registry.clone())
             .route("/ws", web::get().to(ws_index))
+            .route("/", web::get().to(index))
+            .service(fs::Files::new("/assets", "front/dist/assets").use_etag(true))
     })
-        // 2 threads is plenty for this example; the default is to have as many threads as CPU cores
-        .workers(2)
-        .bind("127.0.0.1:3000")?
-        .run()
-        .await
+    // 2 threads is plenty for this example; the default is to have as many threads as CPU cores
+    .workers(2)
+    .bind(listen)?
+    .run()
+    .await
 }
