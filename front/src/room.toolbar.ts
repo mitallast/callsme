@@ -35,6 +35,12 @@ const ScreenShareButton = (state: VideoState): HTMLButtonElement => {
     return btn;
 };
 
+const SettingsButton = (roomState: RoomState): HTMLButtonElement => {
+    const btn = Button("Settings", 'settings');
+    btn.addEventListener('click', () => roomState.showSettings.set(true));
+    return btn;
+};
+
 const CloseRoomButton = (roomState: RoomState): HTMLButtonElement => {
     const btn = Button("Close room", 'call_end');
     btn.addEventListener('click', () => roomState.running.set(false));
@@ -54,6 +60,7 @@ export const RoomToolbar = (
     tool.append(PauseAudioButton(audioState));
     tool.append(PauseVideoButton(videoState));
     tool.append(ScreenShareButton(videoState));
+    tool.append(SettingsButton(roomState));
     tool.append(CloseRoomButton(roomState));
     return tool;
 };

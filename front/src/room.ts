@@ -11,6 +11,7 @@ import {ConsumerState} from "./consumer.state";
 import {SendPreview} from "./participant";
 import type {EventListener} from "./events";
 import {RoomJoin} from "./room.join.ts";
+import {RoomSettings} from "./room.settings.ts";
 
 export class Room {
     private readonly roomState = new RoomState();
@@ -30,7 +31,9 @@ export class Room {
         const room = document.createElement('div');
         room.classList.add('room');
         room.append(grid);
+        room.append(RoomSettings(this.roomState, this.audioState, this.videoState));
         room.append(RoomToolbar(this.roomState, this.audioState, this.videoState));
+
         app.append(room);
 
         const preview = new SendPreview(grid, 'you' as ParticipantId, this.videoState);

@@ -8,41 +8,66 @@
 </head>
 <body>
 <div id="app">
-    <!--    <div class="room">-->
-    <!--        <div class="video-grid">-->
-    <!--            <figure class="video-overlay">-->
-    <!--                <video autoplay playsinline poster="src/img.png"></video>-->
-    <!--                <figcaption>you</figcaption>-->
-    <!--            </figure>-->
-    <!--            <figure>-->
-    <!--                <video autoplay playsinline poster="src/img.png"></video>-->
-    <!--                <figcaption>participant</figcaption>-->
-    <!--            </figure>-->
-    <!--            <figure>-->
-    <!--                <video autoplay playsinline poster="src/img.png"></video>-->
-    <!--                <figcaption>participant</figcaption>-->
-    <!--            </figure>-->
-    <!--        </div>-->
-    <!--        <div class="room-toolbar">-->
-    <!--            <button class="material-symbols-outlined">mic</button>-->
-    <!--            <button class="material-symbols-outlined">mic_off</button>-->
-    <!--            <button class="material-symbols-outlined">videocam</button>-->
-    <!--            <button class="material-symbols-outlined">videocam_off</button>-->
-    <!--            <button class="material-symbols-outlined">screen_share</button>-->
-    <!--            <button class="material-symbols-outlined">call_end</button>-->
-    <!--        </div>-->
+    <div class="room">
+        <div class="video-grid">
+            <figure class="video-overlay">
+                <video autoplay playsinline poster="src/img.png"></video>
+                <figcaption>you</figcaption>
+            </figure>
+            <figure>
+                <video autoplay playsinline poster="src/img.png"></video>
+                <figcaption>participant</figcaption>
+            </figure>
+            <figure>
+                <video autoplay playsinline poster="src/img.png"></video>
+                <figcaption>participant</figcaption>
+            </figure>
+        </div>
+        <div class="room-toolbar">
+            <button class="material-symbols-outlined">mic</button>
+            <button class="material-symbols-outlined">mic_off</button>
+            <button class="material-symbols-outlined">videocam</button>
+            <button class="material-symbols-outlined">videocam_off</button>
+            <button class="material-symbols-outlined">screen_share</button>
+            <button class="material-symbols-outlined">call_end</button>
+        </div>
+        <div class="room-settings">
+            <div class="room-settings-panel">
+                <h2>Settings</h2>
+
+                <label>Select audio</label>
+                <select>
+                    <option>Macbook pro mic 1</option>
+                    <option>Macbook pro mic 2</option>
+                    <option>Macbook pro mic 3</option>
+                    <option>Macbook pro mic 4</option>
+                </select>
+
+                <label>Select video</label>
+                <select>
+                    <option>Macbook pro camera 1</option>
+                    <option>Macbook pro camera 2</option>
+                    <option>Macbook pro camera 3</option>
+                    <option>Macbook pro camera 4</option>
+                </select>
+
+                <div class="row-action">
+                    <button>Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    <div class="room-join">-->
+    <!--        <form>-->
+    <!--            <div class="form-row">-->
+    <!--                <input type="text" name="roomId" placeholder="Room ID" required="">-->
+    <!--            </div>-->
+    <!--            <div class="form-row">-->
+    <!--                <button class="material-symbols-outlined">autorenew</button>-->
+    <!--                <button type="submit">Join</button>-->
+    <!--            </div>-->
+    <!--        </form>-->
     <!--    </div>-->
-<!--    <div class="room-join">-->
-<!--        <form>-->
-<!--            <div class="form-row">-->
-<!--                <input type="text" name="roomId" placeholder="Room ID" required="">-->
-<!--            </div>-->
-<!--            <div class="form-row">-->
-<!--                <button class="material-symbols-outlined">autorenew</button>-->
-<!--                <button type="submit">Join</button>-->
-<!--            </div>-->
-<!--        </form>-->
-<!--    </div>-->
 </div>
 <script type="module" src="src/index.ts"></script>
 </body>
