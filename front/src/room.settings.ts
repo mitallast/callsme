@@ -19,8 +19,8 @@ export const RoomSettings = (
     selectAudio.setAttribute('id', 'select-audio');
 
     const labelVideo = document.createElement('label');
-    labelAudio.textContent = 'Select video';
-    labelAudio.setAttribute('for', 'select-video');
+    labelVideo.textContent = 'Select video';
+    labelVideo.setAttribute('for', 'select-video');
 
     const selectVideo = document.createElement('select');
     selectVideo.setAttribute('id', 'select-video');
