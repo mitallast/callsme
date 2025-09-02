@@ -60,15 +60,15 @@ impl Drop for ParticipantConnection {
 
 impl ParticipantConnection {
     /// Create a new instance representing a WebSocket connection
-    pub async fn new(room: Room) -> Result<Self, String> {
+    pub async fn new(room: Room, announced_address: Option<String>) -> Result<Self, String> {
         // We know that for a video room example we'll need 2 transports, so we can create both
         // right away. This may not be the case for real-world applications, or you may create
         // this at a different time and/or in different order.
         let transport_options =
             WebRtcTransportOptions::new(WebRtcTransportListenInfos::new(ListenInfo {
                 protocol: Protocol::Udp,
-                ip: IpAddr::V4(Ipv4Addr::LOCALHOST),
-                announced_address: None,
+                ip: IpAddr::V4(Ipv4Addr::UNSPECIFIED),
+                announced_address,
                 expose_internal_ip: false,
                 port: None,
                 port_range: Some(40000..=40100),

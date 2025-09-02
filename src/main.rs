@@ -7,7 +7,7 @@ use actix_web::web::{Data, Payload, Query};
 use actix_web::{App, Error, HttpRequest, HttpResponse, HttpServer, web};
 use actix_web_actors::ws;
 use clap::Parser;
-use log::{debug};
+use log::debug;
 use mediasoup::prelude::*;
 use serde::Deserialize;
 
@@ -30,6 +30,7 @@ async fn ws_index(
     request: HttpRequest,
     worker_manager: Data<WorkerManager>,
     rooms_registry: Data<RoomsRegistry>,
+    settings: Data<Settings>,
     stream: Payload,
 ) -> Result<HttpResponse, Error> {
     let room = match query_parameters.room_id.clone() {
@@ -50,7 +51,8 @@ async fn ws_index(
         }
     };
 
-    match ParticipantConnection::new(room).await {
+    let announced_address = settings.announce.clone();
+    match ParticipantConnection::new(room, announced_address).await {
         Ok(echo_server) => ws::start(echo_server, &request, stream),
         Err(error) => {
             eprintln!("{error}");
@@ -67,21 +69,27 @@ async fn index() -> Result<fs::NamedFile, Error> {
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
-struct Args {
+struct Settings {
     #[arg(long, default_value_t = 3000)]
     port: u16,
 
     #[arg(long)]
-    host: Option<String>,
+    listen: Option<String>,
+
+    #[arg(long)]
+    announce: Option<String>,
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init();
 
-    let args = Args::parse();
-    let host = args.host.unwrap_or_else(|| "127.0.0.1".to_string());
-    let listen = format!("{}:{}", host, args.port);
+    let settings = Settings::parse();
+    let host = settings
+        .listen
+        .clone()
+        .unwrap_or_else(|| "0.0.0.0".to_string());
+    let listen = format!("{}:{}", host, settings.port);
     debug!("Listening on {}", listen);
 
     // We will reuse the same worker manager across all connections, this is more than enough for
@@ -89,12 +97,14 @@ async fn main() -> std::io::Result<()> {
     let worker_manager = Data::new(WorkerManager::new());
     // Room registry will hold all the active rooms
     let rooms_registry = Data::new(RoomsRegistry::default());
+    let settings_data = Data::new(settings);
 
     HttpServer::new(move || {
         App::new()
             .wrap(Compress::default())
             .app_data(worker_manager.clone())
             .app_data(rooms_registry.clone())
+            .app_data(settings_data.clone())
             .route("/ws", web::get().to(ws_index))
             .route("/", web::get().to(index))
             .service(fs::Files::new("/assets", "front/dist/assets").use_etag(true))
