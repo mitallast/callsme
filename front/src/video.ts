@@ -1,21 +1,26 @@
 import {BooleanEventEmitter, ValueEventEmitter} from "./events";
+import type {FrameSize} from "./types.ts";
 
 export class VideoState {
     public readonly inputs = new ValueEventEmitter<MediaDeviceInfo[]>([]);
     public readonly selectedInput = new ValueEventEmitter<MediaDeviceInfo | null>(null);
+    public readonly frameRate = new ValueEventEmitter<number>(30);
+    public readonly frameSize = new ValueEventEmitter<FrameSize>([1920, 1080]);
     public readonly screenShare = new BooleanEventEmitter(false);
     public readonly pause = new BooleanEventEmitter(false);
     public readonly track = new ValueEventEmitter<MediaStreamTrack | null>(null);
 
     constructor() {
-        this.inputs.addListener(() => this.updateSelectedInput());
-        this.selectedInput.addListener(() => this.updateSelectedTrack());
-        this.screenShare.addListener(() => this.updateSelectedTrack());
+        this.inputs.addListener(this.updateSelectedInput.bind(this));
+        this.selectedInput.addListener(this.updateSelectedTrack.bind(this));
+        this.screenShare.addListener(this.updateSelectedTrack.bind(this));
+        this.frameRate.addListener(this.updateConstraints.bind(this));
+        this.frameSize.addListener(this.updateConstraints.bind(this));
     }
 
     public async init() {
         await this.updateInputs();
-        navigator.mediaDevices.addEventListener('devicechange', () => this.updateInputs());
+        navigator.mediaDevices.addEventListener('devicechange', this.updateInputs.bind(this));
     }
 
     private async updateInputs() {
@@ -53,15 +58,30 @@ export class VideoState {
         }
     }
 
+    private async updateConstraints() {
+        const frameRate = this.frameRate.value;
+        const [width, height] = this.frameSize.value;
+        const current = this.track.value;
+        if (current) {
+            const constraint: MediaTrackConstraintSet = {
+                frameRate: {ideal: frameRate},
+                width: {ideal: width},
+                height: {ideal: height},
+            };
+            console.info("applyConstraints", constraint);
+            await current.applyConstraints(constraint);
+            console.info("applyConstraints result", current.getSettings());
+        }
+    }
+
     private async cameraStream() {
         const info = this.selectedInput.value
         const constraints: DisplayMediaStreamOptions = {
             audio: false,
             video: {
                 deviceId: info?.deviceId ? {exact: info.deviceId} : undefined,
-                width: {ideal: 1280},
-                height: {ideal: 720},
-                frameRate: {ideal: 30, max: 60}
+                width: {max: 1920},
+                frameRate: {max: 60},
                 // при необходимости: facingMode: { ideal: "user" | "environment" }
             }
         };

@@ -94,3 +94,5 @@ export type ClientMessage =
     ClientConnectConsumerTransport |
     ClientConsume |
     ClientConsumerResume;
+
+export type FrameSize = [number, number];
