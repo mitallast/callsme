@@ -49,7 +49,9 @@ export class Room {
 
     public async init() {
         const roomId = (new URL(location.href)).searchParams.get('roomId') as RoomId | null;
-        const wsUrl = new URL('ws://localhost:3000/ws');
+        const wsUrl = new URL(location.href);
+        wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+        wsUrl.pathname = '/ws';
         if (roomId) {
             wsUrl.searchParams.set('roomId', roomId);
             await this.roomState.roomId.set(roomId);
