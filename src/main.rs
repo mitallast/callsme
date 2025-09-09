@@ -52,7 +52,7 @@ async fn ws_index(
     };
 
     let announced_address = settings.announce.clone().or(Some("127.0.0.1".to_string()));
-    match ParticipantConnection::new(room, announced_address).await {
+    match ParticipantConnection::new(room, announced_address, settings.use_tcp).await {
         Ok(echo_server) => ws::start(echo_server, &request, stream),
         Err(error) => {
             eprintln!("{error}");
@@ -78,6 +78,9 @@ struct Settings {
 
     #[arg(long)]
     announce: Option<String>,
+
+    #[arg(long, default_value_t = false)]
+    use_tcp: bool,
 }
 
 #[actix_web::main]

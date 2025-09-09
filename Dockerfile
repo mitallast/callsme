@@ -41,4 +41,4 @@ RUN set -eux; \
 
 ENV RUST_LOG='debug'
 
-CMD ["./callsme", "--listen", "0.0.0.0", "--port", "3000", "--announce", "127.0.0.1"]
+CMD ["./callsme", "--listen", "0.0.0.0", "--port", "3000", "--announce", "127.0.0.1", "--use-tcp"]
