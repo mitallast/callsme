@@ -2,17 +2,16 @@ import {ValueEventEmitter} from "./events";
 import {types, Device} from "mediasoup-client";
 import type {ConsumerId, ServerInit, ServerProducerAdded, ServerProducerRemoved} from "./types";
 import {WSConnection} from "./socket";
-import {Participants} from "./participants";
+import {ParticipantsState} from "./participants.state.ts";
 
 export class ConsumerState {
     private readonly device: Device;
-    private readonly participants: Participants;
-
+    public readonly participants: ParticipantsState
     public readonly consumerTransport = new ValueEventEmitter<types.Transport | null>(null);
 
-    constructor(device: Device, participants: Participants) {
+    constructor(device: Device) {
         this.device = device;
-        this.participants = participants;
+        this.participants = new ParticipantsState();
     }
 
     public async start(message: ServerInit, ws: WSConnection) {

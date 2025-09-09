@@ -1,5 +1,5 @@
-import {AudioState} from "./audio";
-import {VideoState} from "./video";
+import {AudioState} from "./audio.state";
+import {VideoState} from "./video.state";
 import {RoomState} from "./room.state";
 
 const Button = (title: string, icon: string): HTMLButtonElement => {
@@ -47,19 +47,15 @@ const CloseRoomButton = (roomState: RoomState): HTMLButtonElement => {
     return btn;
 };
 
-export const RoomToolbar = (
-    roomState: RoomState,
-    audioState: AudioState,
-    videoState: VideoState,
-): HTMLDivElement => {
+export const RoomToolbar = (roomState: RoomState): HTMLDivElement => {
     const tool: HTMLDivElement = document.createElement('div');
     tool.classList.add('room-toolbar');
     tool.setAttribute('role', 'toolbar');
     tool.setAttribute('aria-label', 'toolbar');
 
-    tool.append(PauseAudioButton(audioState));
-    tool.append(PauseVideoButton(videoState));
-    tool.append(ScreenShareButton(videoState));
+    tool.append(PauseAudioButton(roomState.producerState.audio));
+    tool.append(PauseVideoButton(roomState.producerState.video));
+    tool.append(ScreenShareButton(roomState.producerState.video));
     tool.append(SettingsButton(roomState));
     tool.append(CloseRoomButton(roomState));
     return tool;

@@ -5,7 +5,6 @@ import type {
     ServerMessage, ServerProduced
 } from "./types";
 import {types} from "mediasoup-client";
-// import type {MediaKind, RtpParameters} from "mediasoup-client";
 
 export interface WSConnectionHandler {
     onOpen(ws: WSConnection): void;

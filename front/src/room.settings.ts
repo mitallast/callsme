@@ -1,13 +1,10 @@
-import type {AudioState} from "./audio.ts";
-import type {VideoState} from "./video.ts";
 import type {RoomState} from "./room.state.ts";
 import type {FrameSize} from "./types.ts";
 
-export const RoomSettings = (
-    roomState: RoomState,
-    audioState: AudioState,
-    videoState: VideoState,
-): HTMLElement => {
+export const RoomSettings = (roomState: RoomState): HTMLElement => {
+    const video = roomState.producerState.video;
+    const audio = roomState.producerState.audio;
+
     const title = document.createElement('h2');
     title.textContent = 'Settings';
 
@@ -83,7 +80,7 @@ export const RoomSettings = (
 
     const onAudioInputsChanged = () => {
         selectAudio.innerHTML = '';
-        for (const mediaDeviceInfo of audioState.inputs.value) {
+        for (const mediaDeviceInfo of audio.inputs.value) {
             const option = document.createElement('option');
             option.value = mediaDeviceInfo.deviceId;
             option.textContent = mediaDeviceInfo.label;
@@ -93,7 +90,7 @@ export const RoomSettings = (
 
     const onVideoInputsChanged = () => {
         selectVideo.innerHTML = '';
-        for (const mediaDeviceInfo of videoState.inputs.value) {
+        for (const mediaDeviceInfo of video.inputs.value) {
             const option = document.createElement('option');
             option.value = mediaDeviceInfo.deviceId;
             option.textContent = mediaDeviceInfo.label;
@@ -103,16 +100,16 @@ export const RoomSettings = (
 
     const onAudioInputChange = async () => {
         const index = selectAudio.selectedIndex;
-        const device = audioState.inputs.value[index];
+        const device = audio.inputs.value[index];
         console.info("audio changed", device);
-        await audioState.selectedInput.set(device);
+        await audio.selectedInput.set(device);
     }
 
     const onVideoInputChange = async () => {
         const index = selectVideo.selectedIndex;
-        const device = videoState.inputs.value[index];
+        const device = video.inputs.value[index];
         console.info("video changed", device);
-        await videoState.selectedInput.set(device);
+        await video.selectedInput.set(device);
     }
 
     const onVideoTrackChanged = (track: MediaStreamTrack | null) => {
@@ -162,7 +159,7 @@ export const RoomSettings = (
         const index = selectFrameSize.selectedIndex;
         const size = frameSizes[index];
         if (size) {
-            await videoState.frameSize.set(size);
+            await video.frameSize.set(size);
         }
     };
 
@@ -179,16 +176,16 @@ export const RoomSettings = (
     const onFrameRateChange = async () => {
         const frameRate = parseInt(inputFrameRate.value);
         labelFrameRate.innerText = `Frame rate: ${frameRate}`;
-        await videoState.frameRate.set(frameRate);
+        await video.frameRate.set(frameRate);
     }
 
     const destroy = () => {
         roomState.running.removeListener(destroy);
         roomState.showSettings.removeListener(onShow);
-        audioState.inputs.removeListener(onAudioInputsChanged);
-        videoState.inputs.removeListener(onVideoInputsChanged);
-        videoState.track.removeListener(onVideoTrackChanged);
-        videoState.frameRate.removeListener(onFrameRateUpdated);
+        audio.inputs.removeListener(onAudioInputsChanged);
+        video.inputs.removeListener(onVideoInputsChanged);
+        video.track.removeListener(onVideoTrackChanged);
+        video.frameRate.removeListener(onFrameRateUpdated);
         inputFrameRate.removeEventListener('input', onFrameRateInput);
         inputFrameRate.removeEventListener('change', onFrameRateChange);
         selectAudio.removeEventListener('change', onAudioInputChange);
@@ -200,10 +197,10 @@ export const RoomSettings = (
 
     roomState.running.addListener(destroy);
     roomState.showSettings.addListener(onShow);
-    audioState.inputs.addListener(onAudioInputsChanged);
-    videoState.inputs.addListener(onVideoInputsChanged);
-    videoState.track.addListener(onVideoTrackChanged);
-    videoState.frameRate.addListener(onFrameRateUpdated);
+    audio.inputs.addListener(onAudioInputsChanged);
+    video.inputs.addListener(onVideoInputsChanged);
+    video.track.addListener(onVideoTrackChanged);
+    video.frameRate.addListener(onFrameRateUpdated);
     inputFrameRate.addEventListener('input', onFrameRateInput);
     inputFrameRate.addEventListener('change', onFrameRateChange);
     buttonClose.addEventListener('click', onClose);

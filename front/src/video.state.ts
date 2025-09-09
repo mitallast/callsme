@@ -9,13 +9,16 @@ export class VideoState {
     public readonly screenShare = new BooleanEventEmitter(false);
     public readonly pause = new BooleanEventEmitter(false);
     public readonly track = new ValueEventEmitter<MediaStreamTrack | null>(null);
+    public readonly stream: MediaStream;
 
-    constructor() {
+    constructor(stream: MediaStream) {
+        this.stream = stream;
         this.inputs.addListener(this.updateSelectedInput.bind(this));
         this.selectedInput.addListener(this.updateSelectedTrack.bind(this));
         this.screenShare.addListener(this.updateSelectedTrack.bind(this));
         this.frameRate.addListener(this.updateConstraints.bind(this));
         this.frameSize.addListener(this.updateConstraints.bind(this));
+        this.track.addListener(this.updateMediaStream.bind(this));
     }
 
     public async init() {
@@ -110,6 +113,13 @@ export class VideoState {
             await this.track.set(tracks[0]);
         } else {
             await this.track.set(null);
+        }
+    }
+
+    private async updateMediaStream() {
+        const track = this.track.value;
+        if (track) {
+            this.stream.addTrack(track);
         }
     }
 }

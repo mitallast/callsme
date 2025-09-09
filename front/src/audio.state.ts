@@ -5,10 +5,13 @@ export class AudioState {
     public readonly selectedInput = new ValueEventEmitter<MediaDeviceInfo | null>(null);
     public readonly track = new ValueEventEmitter<MediaStreamTrack | null>(null);
     public readonly pause = new BooleanEventEmitter(false);
+    public readonly stream: MediaStream;
 
-    constructor() {
+    constructor(stream: MediaStream) {
+        this.stream = stream;
         this.inputs.addListener(() => this.updateSelectedInput());
         this.selectedInput.addListener(() => this.updateSelectedTrack());
+        this.track.addListener(this.updateMediaStream.bind(this));
     }
 
     public async init() {
@@ -61,6 +64,13 @@ export class AudioState {
             await this.track.set(tracks[0]);
         } else {
             await this.track.set(null);
+        }
+    }
+
+    private async updateMediaStream() {
+        const track = this.track.value;
+        if (track) {
+            this.stream.addTrack(track);
         }
     }
 }

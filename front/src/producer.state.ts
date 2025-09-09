@@ -2,44 +2,34 @@ import {Device} from "mediasoup-client";
 import {types} from "mediasoup-client";
 import type {ServerInit} from "./types";
 import {WSConnection} from "./socket";
-import {BooleanEventEmitter, ValueEventEmitter} from "./events";
-import {AudioState} from "./audio";
-import {VideoState} from "./video";
+import {ValueEventEmitter} from "./events";
+import {AudioState} from "./audio.state";
+import {VideoState} from "./video.state";
 
 export class ProducerState {
 
     private readonly device: Device;
+    public readonly stream = new MediaStream();
+    public readonly audio = new AudioState(this.stream);
+    public readonly video = new VideoState(this.stream);
+
     private readonly producerTransport = new ValueEventEmitter<types.Transport | null>(null);
-
-    private readonly videoTrack: ValueEventEmitter<MediaStreamTrack | null>;
-    private readonly videoTrackPause: BooleanEventEmitter;
     private readonly videoTrackProducer = new ValueEventEmitter<types.Producer | null>(null);
-
-    private readonly audioTrack: ValueEventEmitter<MediaStreamTrack | null>;
-    private readonly audioTrackPause: BooleanEventEmitter;
     private readonly audioTrackProducer = new ValueEventEmitter<types.Producer | null>(null);
 
-    constructor(
-        device: Device,
-        videoState: VideoState,
-        audioState: AudioState,
-    ) {
+    constructor(device: Device) {
         this.device = device;
-        this.videoTrack = videoState.track;
-        this.videoTrackPause = videoState.pause;
-        this.audioTrack = audioState.track;
-        this.audioTrackPause = audioState.pause;
 
-        this.videoTrack.addListener(() => this.updateVideoTrackProducer());
-        this.audioTrack.addListener(() => this.updateAudioTrackProducer());
+        this.video.track.addListener(() => this.updateVideoTrackProducer());
+        this.audio.track.addListener(() => this.updateAudioTrackProducer());
 
         this.producerTransport.addListener(() => this.updateAudioTrackProducer());
         this.producerTransport.addListener(() => this.updateVideoTrackProducer());
 
-        this.videoTrackPause.addListener(() => this.updateVideoPause());
+        this.video.pause.addListener(() => this.updateVideoPause());
         this.videoTrackProducer.addListener(() => this.updateVideoPause());
 
-        this.audioTrackPause.addListener(() => this.updateAudioPause());
+        this.audio.pause.addListener(() => this.updateAudioPause());
         this.audioTrackProducer.addListener(() => this.updateAudioPause());
     }
 
@@ -77,7 +67,7 @@ export class ProducerState {
 
     private async updateAudioTrackProducer() {
         const transport = this.producerTransport.value;
-        const track = this.audioTrack.value
+        const track = this.audio.track.value
         const current = this.audioTrackProducer.value;
 
         if (!transport) return
@@ -97,7 +87,7 @@ export class ProducerState {
 
     private async updateVideoTrackProducer() {
         const transport = this.producerTransport.value;
-        const track = this.videoTrack.value
+        const track = this.video.track.value
         const current = this.videoTrackProducer.value;
 
         if (!transport) return
@@ -117,7 +107,7 @@ export class ProducerState {
 
     private async updateAudioPause() {
         const producer = this.audioTrackProducer.value;
-        const pause = this.audioTrackPause.value;
+        const pause = this.audio.pause.value;
         if (producer) {
             if (pause) {
                 producer.pause();
@@ -129,7 +119,7 @@ export class ProducerState {
 
     private async updateVideoPause() {
         const producer = this.videoTrackProducer.value;
-        const pause = this.videoTrackPause.value;
+        const pause = this.video.pause.value;
         if (producer) {
             if (pause) {
                 producer.pause();
@@ -140,13 +130,13 @@ export class ProducerState {
     }
 
     public async stop() {
-        if (this.videoTrack.value) {
-            this.videoTrack.value.stop();
-            await this.videoTrack.set(null);
+        if (this.video.track.value) {
+            this.video.track.value.stop();
+            await this.video.track.set(null);
         }
-        if (this.audioTrack.value) {
-            this.audioTrack.value.stop();
-            await this.audioTrack.set(null);
+        if (this.audio.track.value) {
+            this.audio.track.value.stop();
+            await this.audio.track.set(null);
         }
         if (this.videoTrackProducer.value) {
             this.videoTrackProducer.value.close();
