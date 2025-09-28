@@ -9,9 +9,8 @@ import {VideoState} from "./video.state";
 export class ProducerState {
 
     private readonly device: Device;
-    public readonly stream = new MediaStream();
-    public readonly audio = new AudioState(this.stream);
-    public readonly video = new VideoState(this.stream);
+    public readonly audio = new AudioState(new MediaStream());
+    public readonly video = new VideoState(new MediaStream());
 
     private readonly producerTransport = new ValueEventEmitter<types.Transport | null>(null);
     private readonly videoTrackProducer = new ValueEventEmitter<types.Producer | null>(null);
